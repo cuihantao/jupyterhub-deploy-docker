@@ -27,6 +27,65 @@ c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 # Pass the network name as argument to spawned containers
 c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
+# Pass environment variables to the notebook
+# -- Neo4j
+c.Spawner.env_keep.append('NEO4J_HOST')
+c.Spawner.env_keep.append('NEO4J_PORT')
+c.Spawner.env_keep.append('NEO4J_USER')
+c.Spawner.env_keep.append('NEO4J_PASSWORD')
+c.Spawner.env_keep.append('NEO4J_HOST_DEV')
+c.Spawner.env_keep.append('NEO4J_PORT_DEV')
+c.Spawner.env_keep.append('NEO4J_USER_DEV')
+c.Spawner.env_keep.append('NEO4J_PASSWORD_DEV')
+# -- Elasticsearch
+c.Spawner.env_keep.append('ELASTICSEARCH_HOST')
+c.Spawner.env_keep.append('ELASTICSEARCH_PORT')
+c.Spawner.env_keep.append('ELASTICSEARCH_HOST_DEV')
+c.Spawner.env_keep.append('ELASTICSEARCH_PORT_DEV')
+# -- Redis
+c.Spawner.env_keep.append('REDIS_DATA_HOST')
+c.Spawner.env_keep.append('REDIS_DATA_PORT')
+c.Spawner.env_keep.append('REDIS_DATA_HOST_DEV')
+c.Spawner.env_keep.append('REDIS_DATA_PORT_DEV')
+c.Spawner.env_keep.append('REDIS_BACKEND_HOST')
+c.Spawner.env_keep.append('REDIS_BACKEND_PORT')
+c.Spawner.env_keep.append('REDIS_BACKEND_HOST_DEV')
+c.Spawner.env_keep.append('REDIS_BACKEND_PORT_DEV')
+# -- ml-instalment-plan
+c.Spawner.env_keep.append('ML_INSTALMENT_PLAN_URL_PROD')
+c.Spawner.env_keep.append('ML_INSTALMENT_PLAN_URL_DEV')
+# -- ml-word2vec-{en,es}
+c.Spawner.env_keep.append('ML_WORD2VEC_EN_URL_PROD')
+c.Spawner.env_keep.append('ML_WORD2VEC_EN_URL_DEV')
+c.Spawner.env_keep.append('ML_WORD2VEC_ES_URL_PROD')
+c.Spawner.env_keep.append('ML_WORD2VEC_ES_URL_DEV')
+# -- ml-shopping-item
+c.Spawner.env_keep.append('ML_SHOPPING_ITEM_URL_PROD')
+c.Spawner.env_keep.append('ML_SHOPPING_ITEM_URL_DEV')
+# -- ml-shopping-cart
+c.Spawner.env_keep.append('ML_SHOPPING_CART_URL_PROD')
+c.Spawner.env_keep.append('ML_SHOPPING_CART_URL_DEV')
+# -- ml-graph-identity
+c.Spawner.env_keep.append('ML_GRAPH_IDENTITY_URL_PROD')
+c.Spawner.env_keep.append('ML_GRAPH_IDENTITY_URL_DEV')
+# -- ml-graph-behaviours
+c.Spawner.env_keep.append('ML_GRAPH_BEHAVIOURS_URL_PROD')
+c.Spawner.env_keep.append('ML_GRAPH_BEHAVIOURS_URL_DEV')
+# -- ml-customer-identity
+c.Spawner.env_keep.append('ML_CUSTOMER_IDENTITY_URL_PROD')
+c.Spawner.env_keep.append('ML_CUSTOMER_IDENTITY_URL_DEV')
+# -- ml-document-id
+c.Spawner.env_keep.append('ML_DOCUMENT_ID_URL_PROD')
+c.Spawner.env_keep.append('ML_DOCUMENT_ID_URL_DEV')
+# -- ml-metaalgorithm
+c.Spawner.env_keep.append('ML_METAALGORITHM_URL_PROD')
+c.Spawner.env_keep.append('ML_METAALGORITHM_URL_DEV')
+# -- ml-downpayment-m
+c.Spawner.env_keep.append('ML_DOWNPAYMENT_M_URL_PROD')
+c.Spawner.env_keep.append('ML_DOWNPAYMENT_M_URL_DEV')
+# -- WORD2VEC
+c.Spawner.env_keep.append('WORD2VEC_EN')
+c.Spawner.env_keep.append('WORD2VEC_ES')
 # Explicitly set notebook directory because we'll be mounting a host volume to
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
