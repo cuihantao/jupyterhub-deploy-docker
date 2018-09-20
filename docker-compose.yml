@@ -36,6 +36,7 @@ services:
       - "data:${DATA_VOLUME_CONTAINER}"
     ports:
       - "443:443"
+      - "80:80"
     links:
       - hub-db
     environment:
