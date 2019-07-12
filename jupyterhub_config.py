@@ -42,6 +42,9 @@ c.Spawner.env_keep.append('ELASTICSEARCH_HOST')
 c.Spawner.env_keep.append('ELASTICSEARCH_PORT')
 c.Spawner.env_keep.append('ELASTICSEARCH_HOST_DEV')
 c.Spawner.env_keep.append('ELASTICSEARCH_PORT_DEV')
+# -- postgres
+c.Spawner.env_keep.append('POSTGRESQL_URI')
+c.Spawner.env_keep.append('POSTGRESQL_URI_DEV')
 # -- Redis
 c.Spawner.env_keep.append('REDIS_DATA_HOST')
 c.Spawner.env_keep.append('REDIS_DATA_PORT')
