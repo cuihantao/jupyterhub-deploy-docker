@@ -39,9 +39,9 @@ c.Spawner.env_keep.append('NEO4J_USER_DEV')
 c.Spawner.env_keep.append('NEO4J_PASSWORD_DEV')
 # -- Elasticsearch
 c.Spawner.env_keep.append('ELASTICSEARCH_HOST')
-c.Spawner.env_keep.append('ELASTICSEARCH_PORT')
+c.Spawner.env_keep.append('ELASTICSEARCH_AUTH')
 c.Spawner.env_keep.append('ELASTICSEARCH_HOST_DEV')
-c.Spawner.env_keep.append('ELASTICSEARCH_PORT_DEV')
+c.Spawner.env_keep.append('ELASTICSEARCH_AUTH_DEV')
 # -- postgres
 c.Spawner.env_keep.append('POSTGRESQL_URI')
 c.Spawner.env_keep.append('POSTGRESQL_URI_DEV')
