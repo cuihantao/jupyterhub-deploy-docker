@@ -52,6 +52,8 @@ c.Spawner.env_keep.append('ELASTICSEARCH_ML_HOST_DEV')
 c.Spawner.env_keep.append('ELASTICSEARCH_ML_AUTH_DEV')
 c.Spawner.env_keep.append('ELASTICSEARCH_ML_URI')
 c.Spawner.env_keep.append('ELASTICSEARCH_ML_URI_DEV')
+c.Spawner.env_keep.append('ELASTICSEARCH_PREDICTIONS_URI')
+c.Spawner.env_keep.append('ELASTICSEARCH_PREDICTIONS_URI_DEV')
 # -- postgres
 c.Spawner.env_keep.append('POSTGRESQL_URI')
 c.Spawner.env_keep.append('POSTGRESQL_URI_DEV')
