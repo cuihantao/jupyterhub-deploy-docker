@@ -29,29 +29,13 @@ c.DockerSpawner.network_name = network_name
 c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
 # Pass environment variables to the notebook
 # -- Neo4j
-c.Spawner.env_keep.append('NEO4J_HOST')
-c.Spawner.env_keep.append('NEO4J_PORT')
-c.Spawner.env_keep.append('NEO4J_USER')
-c.Spawner.env_keep.append('NEO4J_PASSWORD')
 c.Spawner.env_keep.append('NEO4J_URI')
-c.Spawner.env_keep.append('NEO4J_HOST_DEV')
-c.Spawner.env_keep.append('NEO4J_PORT_DEV')
-c.Spawner.env_keep.append('NEO4J_USER_DEV')
-c.Spawner.env_keep.append('NEO4J_PASSWORD_DEV')
 c.Spawner.env_keep.append('NEO4J_URI_DEV')
 # -- Elasticsearch
-c.Spawner.env_keep.append('ELASTICSEARCH_HOST')
-c.Spawner.env_keep.append('ELASTICSEARCH_AUTH')
 c.Spawner.env_keep.append('ELASTICSEARCH_URI')
 c.Spawner.env_keep.append('ELASTICSEARCH_URI_DEV')
-c.Spawner.env_keep.append('ELASTICSEARCH_HOST_DEV')
-c.Spawner.env_keep.append('ELASTICSEARCH_AUTH_DEV')
-c.Spawner.env_keep.append('ELASTICSEARCH_ML_HOST')
-c.Spawner.env_keep.append('ELASTICSEARCH_ML_AUTH')
-c.Spawner.env_keep.append('ELASTICSEARCH_ML_HOST_DEV')
-c.Spawner.env_keep.append('ELASTICSEARCH_ML_AUTH_DEV')
-c.Spawner.env_keep.append('ELASTICSEARCH_ML_URI')
-c.Spawner.env_keep.append('ELASTICSEARCH_ML_URI_DEV')
+c.Spawner.env_keep.append('ELASTICSEARCH_FEATURE_STORE_URI')
+c.Spawner.env_keep.append('ELASTICSEARCH_FEATURE_STORE_URI_DEV')
 c.Spawner.env_keep.append('ELASTICSEARCH_PREDICTIONS_URI')
 c.Spawner.env_keep.append('ELASTICSEARCH_PREDICTIONS_URI_DEV')
 # -- postgres
