@@ -42,6 +42,7 @@ c.Spawner.env_keep.append('ELASTICSEARCH_PREDICTIONS_URI_DEV')
 c.Spawner.env_keep.append('POSTGRESQL_URI')
 c.Spawner.env_keep.append('POSTGRESQL_URI_DEV')
 c.Spawner.env_keep.append('POSTGRESQL_REPLICA_URI')
+c.Spawner.env_keep.append('POSTGRESQL_BACKEND_REPLICA_URI')
 # -- Redis
 c.Spawner.env_keep.append('REDIS_DATA_HOST')
 c.Spawner.env_keep.append('REDIS_DATA_PORT')
