@@ -8,6 +8,15 @@ RUN python3 -m pip install --no-cache \
 
 USER root
 
+# Install and configure jupyter notebook extensions
+
+RUN python3 -m pip install --no-cache \
+    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
+    ipysheet
+
+RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+    jupyter contrib nbextension install --sys-prefix
+
 # Julia installation
 # Default values can be overridden at build time
 # (ARGS are in lower case to distinguish them from ENV)
@@ -69,13 +78,5 @@ RUN touch "${HOME}/STORE_FILES_IN_work_ONLY" && \
 
 ENV JULIA_DEPOT_PATH="${HOME}/work/.julia":"${JULIA_DEPOT_PATH}"
 
-# Install and configure jupyter notebook extensions
-
-RUN python3 -m pip install --no-cache \
-    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
-    ipysheet
-
-RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter contrib nbextension install --sys-prefix
 
 WORKDIR $HOME
