@@ -55,11 +55,6 @@ RUN julia -e 'import Pkg; Pkg.update()' && \
     rm -rf "${HOME}/.local" && \
     fix-permissions "${JULIA_PKGDIR}" "${CONDA_DIR}/share/jupyter"
 
-# Add warning about volatile storage
-RUN touch "${HOME}/STORE_FILES_IN_work_ONLY" && \
-    touch "${HOME}/DO_NOT_STORE_FILES_HERE" && \
-    touch "${HOME}/FILES_HERE_ARE_NOT_SAVED"
-
 # Add additional Julia packages.
 
 # RUN julia -e 'import Pkg; Pkg.add(["Andes", "Revise"])'
@@ -67,7 +62,7 @@ RUN touch "${HOME}/STORE_FILES_IN_work_ONLY" && \
 # Prepend user's homedir to JULIA_DEPOT
 # Allows user-specific package installation
 
-ENV JULIA_DEPOT_PATH="${HOME}/work/.julia":"${JULIA_DEPOT_PATH}"
+ENV JULIA_DEPOT_PATH="${HOME}/.julia":"${JULIA_DEPOT_PATH}"
 
 # Install and configure jupyter notebook extensions
 # These need to be installed in the user mode.
