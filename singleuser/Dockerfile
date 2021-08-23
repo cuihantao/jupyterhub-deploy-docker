@@ -70,9 +70,11 @@ RUN touch "${HOME}/STORE_FILES_IN_work_ONLY" && \
 ENV JULIA_DEPOT_PATH="${HOME}/work/.julia":"${JULIA_DEPOT_PATH}"
 
 # Install and configure jupyter notebook extensions
+# These need to be installed in the user mode.
 
 RUN python3 -m pip install --no-cache \
-    ipywidgets widgetsnbextension jupyter_contrib_nbextensions
+    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
+    ipysheet
 
 RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter contrib nbextension install --sys-prefix
