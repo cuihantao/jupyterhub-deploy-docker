@@ -4,17 +4,26 @@ ARG JUPYTERHUB_VERSION
 
 RUN python3 -m pip install --no-cache \
     jupyterhub==$JUPYTERHUB_VERSION \
-    andes kvxopt
+    andes kvxopt \
+    git+https://github.com/sensl/nbvscode.git#master
+
+RUN python3 -m pip install --no-cache -r \
+    https://raw.githubusercontent.com/cuihantao/andes/master/requirements-dev.txt
 
 USER root
+
+# Install system essentials
+
+RUN apt-get update && apt-get install -y \
+    vim tmux rclone \
+    && rm -rf /var/lib/apt/lists/*
 
 # Julia installation
 # Default values can be overridden at build time
 # (ARGS are in lower case to distinguish them from ENV)
 # Check https://julialang.org/downloads/
-ARG julia_version="1.6.1"
+ARG julia_version="1.6.2"
 # SHA256 checksum
-ARG julia_checksum="7c888adec3ea42afbfed2ce756ce1164a570d50fa7506c3f2e1e2cbc49d52506"
 
 # Julia dependencies
 # install Julia packages in /opt/julia instead of $HOME
@@ -26,7 +35,6 @@ WORKDIR /tmp
 # hadolint ignore=SC2046
 RUN mkdir -p "/opt/julia-${JULIA_VERSION}" && \
     wget -q https://julialang-s3.julialang.org/bin/linux/x64/$(echo "${JULIA_VERSION}" | cut -d. -f 1,2)"/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" && \
-    echo "${julia_checksum} *julia-${JULIA_VERSION}-linux-x86_64.tar.gz" | sha256sum -c - && \
     tar xzf "julia-${JULIA_VERSION}-linux-x86_64.tar.gz" -C "/opt/julia-${JULIA_VERSION}" --strip-components=1 && \
     rm "/tmp/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" && \
     ln -fs /opt/julia-${JULIA_VERSION}/bin/julia /usr/local/bin/julia
@@ -40,6 +48,19 @@ RUN mkdir -p /etc/julia && \
     fix-permissions "${JULIA_PKGDIR}"
 
 RUN rm -r "${CONDA_DIR}/share/jupyter/kernels/julia-1.6"
+
+# Code server installation
+ENV CODESERVER_URL="https://github.com/cdr/code-server/releases/download/v3.11.1/code-server_3.11.1_amd64.deb" \
+    CODESERVER="code-server_3.11.1_amd64.deb"
+
+
+RUN wget ${CODESERVER_URL} && \
+    dpkg -i ${CODESERVER} && \
+    rm ${CODESERVER} ** \
+    rm -rf code-server* && \
+    rm -rf /tmp/* && \
+    rm -rf $HOME/.cache && \
+    rm -rf $HOME/.node-gyp
 
 USER $NB_UID
 
