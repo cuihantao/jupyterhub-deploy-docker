@@ -2,21 +2,7 @@ ARG DOCKER_NOTEBOOK_IMAGE
 FROM $DOCKER_NOTEBOOK_IMAGE
 ARG JUPYTERHUB_VERSION
 
-RUN python3 -m pip install --no-cache \
-    jupyterhub==$JUPYTERHUB_VERSION \
-    andes[all] kvxopt \
-    git+https://github.com/sensl/nbvscode.git#master
-
 USER root
-
-# Install and configure jupyter notebook extensions
-
-RUN python3 -m pip install --no-cache \
-    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
-    ipysheet
-
-RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter contrib nbextension install --sys-prefix
 
 # Install system essentials
 
@@ -69,6 +55,11 @@ RUN wget ${CODESERVER_URL} && \
     rm -rf $HOME/.node-gyp
 
 USER $NB_UID
+
+RUN python3 -m pip install --no-cache \
+    jupyterhub==$JUPYTERHUB_VERSION \
+    andes[all] kvxopt \
+    git+https://github.com/sensl/nbvscode.git#master
 
 # Add Julia packages.
 # Install IJulia as jovyan and then move the kernelspec out
