@@ -45,7 +45,6 @@ RUN rm -r "${CONDA_DIR}/share/jupyter/kernels/julia-1.8"
 ENV CODESERVER_URL="https://github.com/coder/code-server/releases/download/v4.9.1/code-server_4.9.1_amd64.deb" \
     CODESERVER="code-server_4.9.1_amd64.deb"
 
-
 RUN wget ${CODESERVER_URL} && \
     dpkg -i ${CODESERVER} && \
     rm ${CODESERVER} ** \
@@ -58,8 +57,37 @@ USER $NB_UID
 
 RUN python3 -m pip install --no-cache \
     jupyterhub==$JUPYTERHUB_VERSION \
-    andes[all] kvxopt \
+    andes[all] kvxopt numba \
     git+https://github.com/sensl/nbvscode.git#master
+
+RUN mkdir -p $HOME/repos && \
+    git clone https://github.com/cuihantao/andes $HOME/repos/andes && \
+    python3 -m pip install -e $HOME/repos/andes
+
+# ANDES prep with numba compilation
+RUN andes prep -c 
+
+# Install and configure jupyter notebook extensions
+# These need to be installed in the user mode.
+# Pin jupyterlab-widgets version due to progress bar issue:
+#  https://github.com/jupyterlab/jupyterlab/issues/12977
+
+RUN python3 -m pip install --no-cache \
+    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
+    ipysheet ipympl\
+    jupyterlab-widgets==1.1.1  
+
+RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+    jupyter contrib nbextension install --sys-prefix
+
+RUN code-server --install-extension ms-python.python \
+    --install-extension rust-lang.rust-analyzer \
+    --install-extension eamodio.gitlens \
+    --install-extension julialang.language-julia \
+    --install-extension ms-toolsai.jupyter-keymap \
+    --install-extension esbenp.prettier-vscode \
+    --install-extension aaron-bond.better-comments \
+    --install-extension ms-python.anaconda-extension-pack
 
 # Add Julia packages.
 # Install IJulia as jovyan and then move the kernelspec out
@@ -75,21 +103,17 @@ RUN julia -e 'import Pkg; Pkg.update()' && \
 
 # Add additional Julia packages.
 
-# RUN julia -e 'import Pkg; Pkg.add(["Andes", "Revise"])'
+RUN julia -e 'import Pkg; Pkg.add(["Andes", "Revise"])'
 
 # Prepend user's homedir to JULIA_DEPOT
 # Allows user-specific package installation
 
 ENV JULIA_DEPOT_PATH="${HOME}/.julia":"${JULIA_DEPOT_PATH}"
 
-# Install and configure jupyter notebook extensions
-# These need to be installed in the user mode.
 
-RUN python3 -m pip install --no-cache \
-    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
-    ipysheet
-
-RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter contrib nbextension install --sys-prefix
+# Non-essential FIX: automatically load Matplotlib in widget moode
+# RUN mkdir -p $HOME/.ipython/profile_default/startup && \
+#     echo "get_ipython().run_line_magic('matplotlib', 'inline')" > \
+#     $HOME/.ipython/profile_default/startup/ipympl.py
 
 WORKDIR $HOME
