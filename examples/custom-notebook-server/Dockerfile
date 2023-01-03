@@ -2,10 +2,10 @@
 # Distributed under the terms of the Modified BSD License.
 
 # Pin to version of notebook image that includes start-singleuser.sh script
-FROM jupyter/scipy-notebook:ubuntu-20.04
+FROM jupyter/scipy-notebook:ubuntu-latest
 
 # Install packages in default Python 3 environment
-RUN pip install andes kvxopt --no-cache-dir
+RUN pip install kvxopt --no-cache-dir
 
 # Use custom startup script
 USER root

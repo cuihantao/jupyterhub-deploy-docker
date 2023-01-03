@@ -7,8 +7,10 @@ FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir psycopg2-binary oauthenticator dockerspawner && \
     pip install --no-cache-dir ipywidgets widgetsnbextension jupyter_contrib_nbextensions && \
+    pip install --no-cache-dir jupyter-server-proxy && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter contrib nbextension install --sys-prefix
+    jupyter contrib nbextension install --sys-prefix && \
+    jupyter serverextension enable --sys-prefix jupyter_server_proxy
 
 # Copy TLS certificate and key
 ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
@@ -19,3 +21,4 @@ RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
 COPY ./userlist /srv/jupyterhub/userlist
+COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
