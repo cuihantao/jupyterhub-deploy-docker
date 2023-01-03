@@ -4,11 +4,8 @@ ARG JUPYTERHUB_VERSION
 
 RUN python3 -m pip install --no-cache \
     jupyterhub==$JUPYTERHUB_VERSION \
-    andes kvxopt \
+    andes[all] kvxopt \
     git+https://github.com/sensl/nbvscode.git#master
-
-RUN python3 -m pip install --no-cache -r \
-    https://raw.githubusercontent.com/cuihantao/andes/master/requirements-dev.txt
 
 USER root
 
@@ -22,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 # Default values can be overridden at build time
 # (ARGS are in lower case to distinguish them from ENV)
 # Check https://julialang.org/downloads/
-ARG julia_version="1.6.2"
+ARG julia_version="1.8.4"
 # SHA256 checksum
 
 # Julia dependencies
@@ -47,11 +44,11 @@ RUN mkdir -p /etc/julia && \
     chown "${NB_USER}" "${JULIA_PKGDIR}" && \
     fix-permissions "${JULIA_PKGDIR}"
 
-RUN rm -r "${CONDA_DIR}/share/jupyter/kernels/julia-1.6"
+RUN rm -r "${CONDA_DIR}/share/jupyter/kernels/julia-1.8"
 
 # Code server installation
-ENV CODESERVER_URL="https://github.com/cdr/code-server/releases/download/v3.11.1/code-server_3.11.1_amd64.deb" \
-    CODESERVER="code-server_3.11.1_amd64.deb"
+ENV CODESERVER_URL="https://github.com/coder/code-server/releases/download/v4.9.1/code-server_4.9.1_amd64.deb" \
+    CODESERVER="code-server_4.9.1_amd64.deb"
 
 
 RUN wget ${CODESERVER_URL} && \
