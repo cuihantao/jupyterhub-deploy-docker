@@ -10,6 +10,19 @@ RUN apt-get update && apt-get install -y \
     vim tmux rclone \
     && rm -rf /var/lib/apt/lists/*
 
+RUN python3 -m pip install --no-cache \
+    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
+    ipysheet ipympl\
+    jupyterlab-widgets==1.1.1  
+
+RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+    jupyter contrib nbextension install --sys-prefix
+
+RUN python3 -m pip install --no-cache \
+    jupyterhub==$JUPYTERHUB_VERSION \
+    andes[all] kvxopt \
+    git+https://github.com/sensl/nbvscode.git#master
+
 # Julia installation
 # Default values can be overridden at build time
 # (ARGS are in lower case to distinguish them from ENV)
@@ -20,7 +33,8 @@ ARG julia_version="1.8.4"
 # Julia dependencies
 # install Julia packages in /opt/julia instead of $HOME
 ENV JULIA_DEPOT_PATH=/opt/julia \
-    JULIA_VERSION="${julia_version}"
+    JULIA_VERSION="${julia_version}" \
+    JULIA_PKGDIR=/opt/julia
 
 WORKDIR /tmp
 
@@ -53,41 +67,30 @@ RUN wget ${CODESERVER_URL} && \
     rm -rf $HOME/.cache && \
     rm -rf $HOME/.node-gyp
 
-USER $NB_UID
-
-RUN python3 -m pip install --no-cache \
-    jupyterhub==$JUPYTERHUB_VERSION \
-    andes[all] kvxopt numba \
-    git+https://github.com/sensl/nbvscode.git#master
-
-RUN mkdir -p $HOME/repos && \
-    git clone https://github.com/cuihantao/andes $HOME/repos/andes && \
-    python3 -m pip install -e $HOME/repos/andes
-
-# ANDES prep with numba compilation
-RUN andes prep -c 
-
 # Install and configure jupyter notebook extensions
 # These need to be installed in the user mode.
 # Pin jupyterlab-widgets version due to progress bar issue:
 #  https://github.com/jupyterlab/jupyterlab/issues/12977
 
-RUN python3 -m pip install --no-cache \
-    ipywidgets widgetsnbextension jupyter_contrib_nbextensions \
-    ipysheet ipympl\
-    jupyterlab-widgets==1.1.1  
+# RUN code-server --install-extension ms-python.python \
+#     --install-extension rust-lang.rust-analyzer \
+#     --install-extension eamodio.gitlens \
+#     --install-extension julialang.language-julia \
+#     --install-extension ms-toolsai.jupyter-keymap \
+#     --install-extension esbenp.prettier-vscode \
+#     --install-extension aaron-bond.better-comments \
+#     --install-extension ms-python.anaconda-extension-pack
 
-RUN jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter contrib nbextension install --sys-prefix
+RUN  fix-permissions "${CONDA_DIR}/share/jupyter"
 
-RUN code-server --install-extension ms-python.python \
-    --install-extension rust-lang.rust-analyzer \
-    --install-extension eamodio.gitlens \
-    --install-extension julialang.language-julia \
-    --install-extension ms-toolsai.jupyter-keymap \
-    --install-extension esbenp.prettier-vscode \
-    --install-extension aaron-bond.better-comments \
-    --install-extension ms-python.anaconda-extension-pack
+USER $NB_UID
+
+# RUN mkdir -p $HOME/repos && \
+#     git clone https://github.com/cuihantao/andes $HOME/repos/andes && \
+#     python3 -m pip install -e $HOME/repos/andes
+
+# ANDES prep with numba compilation
+# RUN andes prep -c 
 
 # Add Julia packages.
 # Install IJulia as jovyan and then move the kernelspec out
@@ -97,19 +100,14 @@ RUN julia -e 'import Pkg; Pkg.update()' && \
     julia -e 'using Pkg; pkg"add IJulia"; pkg"build IJulia"; pkg"precompile"' && \
     # move kernelspec out of home \
     mv "${HOME}/.local/share/jupyter/kernels/julia"* "${CONDA_DIR}/share/jupyter/kernels/" && \
-    chmod -R go+rx "${CONDA_DIR}/share/jupyter" && \
+    chmod -R go+rx "${CONDA_DIR}/share/jupyter/kernels" && \
     rm -rf "${HOME}/.local" && \
     fix-permissions "${JULIA_PKGDIR}" "${CONDA_DIR}/share/jupyter"
-
-# Add additional Julia packages.
-
-RUN julia -e 'import Pkg; Pkg.add(["Andes", "Revise"])'
 
 # Prepend user's homedir to JULIA_DEPOT
 # Allows user-specific package installation
 
 ENV JULIA_DEPOT_PATH="${HOME}/.julia":"${JULIA_DEPOT_PATH}"
-
 
 # Non-essential FIX: automatically load Matplotlib in widget moode
 # RUN mkdir -p $HOME/.ipython/profile_default/startup && \
